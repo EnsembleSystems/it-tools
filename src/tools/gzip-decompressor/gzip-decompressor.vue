@@ -1,21 +1,27 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { decompress } from './gzip-decompressor.service';
+
+const router = useRouter();
 
 const userInput = ref('');
 const decompressedOutput = ref('');
 const error = ref<string | null>(null);
 
-const inputKey = ref(0);
-const outputKey = ref(0);
-
 function clearAll() {
   userInput.value = '';
   decompressedOutput.value = '';
   error.value = null;
+}
 
-  inputKey.value++;
-  outputKey.value++;
+function goToJsonPrettify() {
+  router.push({
+    path: '/json-prettify',
+    state: {
+      json: decompressedOutput.value,
+    },
+  });
 }
 
 watch(userInput, async (val) => {
@@ -41,12 +47,11 @@ watch(userInput, async (val) => {
       GZipped User Input
     </div>
     <c-input-text
-      :key="inputKey"
       v-model:value="userInput"
       placeholder="Paste your GZipped string here..."
       rows="6"
       class="mb-6"
-      multiline autosize raw-text monospace max-h-64 overflow-y-auto
+      multiline raw-text monospace overflow-y-auto
     />
 
     <c-alert v-if="error" type="error" title="Error while decompressing" class="mt-4">
@@ -57,17 +62,19 @@ watch(userInput, async (val) => {
       Decompressed Output
     </div>
     <c-input-text
-      :key="outputKey"
       :value="decompressedOutput"
       placeholder=""
-      rows="6"
-      readonly multiline autosize monospace max-h-128 overflow-y-auto
+      rows="12"
+      readonly multiline monospace overflow-y-auto
     />
-  </c-card>
 
-  <div class="mt-2">
-    <c-button @click="clearAll">
-      Clear
-    </c-button>
-  </div>
+    <div class="mt-8 flex justify-center gap-3">
+      <c-button @click="clearAll">
+        Clear
+      </c-button>
+      <c-button @click="goToJsonPrettify">
+        Json Prettify
+      </c-button>
+    </div>
+  </c-card>
 </template>
