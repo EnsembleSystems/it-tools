@@ -5,6 +5,7 @@ import { condenseJsonStructures } from './json-data-condenser.service';
 const rawJson = ref('');
 const condensedJson = ref('');
 const error = ref<string | null>(null);
+const copySuccess = ref(false);
 
 function condense() {
   error.value = null;
@@ -17,6 +18,17 @@ function condense() {
   }
   catch (err: any) {
     error.value = 'Invalid JSON input. Please fix and try again.';
+  }
+}
+
+async function copyToClipboard() {
+  try {
+    await navigator.clipboard.writeText(condensedJson.value);
+    copySuccess.value = true;
+    setTimeout(() => (copySuccess.value = false), 2000);
+  }
+  catch {
+    error.value = 'Failed to copy to clipboard.';
   }
 }
 </script>
@@ -51,6 +63,12 @@ function condense() {
         rows="12"
         readonly multiline monospace raw-text
       />
+
+      <div class="mt-4 flex">
+        <c-button @click="copyToClipboard">
+          {{ copySuccess ? 'Copied!' : 'Copy' }}
+        </c-button>
+      </div>
     </div>
 
     <!-- Error Display -->

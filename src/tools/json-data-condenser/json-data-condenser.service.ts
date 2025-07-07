@@ -1,39 +1,86 @@
-type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+/**
+ * Represents any valid JSON value, including nested objects and arrays.
+ */
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
-function getKeySignature(obj: Record<string, any>): string {
-  // Create a normalized signature string of sorted keys
-  return Object.keys(obj).sort().join(',');
+/**
+ * Checks if a value is a plain (non-array) object.
+ *
+ * @param val - The value to check.
+ * @returns True if the value is a non-null, non-array object.
+ */
+function isPlainObject(val: unknown): val is Record<string, JsonValue> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val);
 }
 
+/**
+ * Recursively generates a deep signature string for a given JSON value.
+ * This signature reflects the structure and key types of the value,
+ * and is used to detect and eliminate redundant object structures in arrays.
+ *
+ * @param value - The JSON value to generate a structural signature for.
+ * @returns A normalized string representing the structure of the value.
+ */
+function getDeepKeySignature(value: JsonValue): string {
+  if (value === null || typeof value !== 'object') {
+    return typeof value;
+  }
+
+  if (Array.isArray(value)) {
+    return `array<${value.map(getDeepKeySignature).join('|')}>`;
+  }
+
+  const keys = Object.keys(value).sort();
+  const nested = keys
+    .map(key => `${key}:${getDeepKeySignature((value as Record<string, JsonValue>)[key])}`)
+    .join(',');
+
+  return `{${nested}}`;
+}
+
+/**
+ * Recursively condenses a JSON object by removing redundant objects
+ * with identical structures (key shape and nested types) in arrays.
+ *
+ * For arrays of objects, only one representative per unique structure
+ * is kept. Objects with additional or differing key paths are preserved.
+ *
+ * Non-array values and primitives are returned unchanged.
+ *
+ * @param data - The JSON value to condense.
+ * @returns A condensed version of the original JSON value.
+ */
 export function condenseJsonStructures(data: JsonValue): JsonValue {
+  // Case 1: Handle arrays
   if (Array.isArray(data)) {
     const seenSignatures = new Set<string>();
     const result: JsonValue[] = [];
 
     for (const item of data) {
-      if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
-        const sig = getKeySignature(item);
-        if (!seenSignatures.has(sig)) {
-          seenSignatures.add(sig);
+      if (isPlainObject(item)) {
+        const signature = getDeepKeySignature(item);
+        if (!seenSignatures.has(signature)) {
+          seenSignatures.add(signature);
           result.push(condenseJsonStructures(item));
         }
       }
       else {
-        // Keep non-object array items
         result.push(condenseJsonStructures(item));
       }
     }
 
     return result;
   }
-
-  if (typeof data === 'object' && data !== null) {
+  // Case 2: Handle plain objects
+  else if (isPlainObject(data)) {
     const result: Record<string, JsonValue> = {};
-    for (const key in data) {
+    for (const key of Object.keys(data)) {
       result[key] = condenseJsonStructures(data[key]);
     }
     return result;
   }
-
-  return data;
+  // Case 3: Base case – primitive (string, number, boolean, null)
+  else {
+    return data;
+  }
 }
