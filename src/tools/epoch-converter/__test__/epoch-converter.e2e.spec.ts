@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
 
+test.use({
+  locale: 'en-GB',
+  timezoneId: 'Europe/Paris',
+});
+
 test.describe('Tool - Epoch converter', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/epoch-converter');
@@ -99,6 +104,7 @@ test.describe('Tool - Epoch converter', () => {
     await page.getByPlaceholder('MM').nth(1).fill('00');
     await page.getByPlaceholder('SS').fill('00');
     await page.getByRole('button', { name: 'Convert to Epoch (Local)' }).click();
+    await expect(page.locator('.c-alert--icon')).toBeVisible({ timeout: 60000 });
 
     await expect(page.getByText('Invalid date string')).toBeVisible({ timeout: 30000 });
   });
