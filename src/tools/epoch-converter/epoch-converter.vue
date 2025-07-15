@@ -95,7 +95,7 @@ function validateDateParts(parts: DateParts): void {
 
   const constructed = new Date(y, m, d);
 
-  if (constructed.getUTCFullYear() !== y || constructed.getUTCMonth() !== m || constructed.getUTCDate() !== m) {
+  if (constructed.getUTCFullYear() !== y || constructed.getUTCMonth() !== m || constructed.getUTCDate() !== d) {
     throw new TypeError('Invalid date string');
   }
 }

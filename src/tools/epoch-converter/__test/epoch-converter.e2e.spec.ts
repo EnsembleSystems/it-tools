@@ -127,6 +127,6 @@ test.describe('Tool - Epoch converter', () => {
     await page.getByRole('button', { name: 'Convert to Epoch (UTC)' }).click();
 
     // Should not show any error alert
-    await expect(page.locator('.c-alert')).not.toBeVisible();
+    await expect(page.getByText('1709208000')).toBeVisible({ timeout: 5000 });
   });
 });
