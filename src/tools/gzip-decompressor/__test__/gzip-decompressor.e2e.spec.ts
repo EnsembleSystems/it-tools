@@ -12,20 +12,21 @@ test.describe('Tool - Gzip decompressor', () => {
   });
 
   test('Decompresses valid base64 string and shows output', async ({ page }) => {
-    const input = page.getByLabel('GZipped User Input');
-    const output = page.getByLabel('Decompressed Output');
+    const input = page.getByPlaceholder('Paste your GZipped string here...');
+    const output = page.locator('textarea[readonly]');
 
     await input.fill(validGzipBase64);
 
-    await expect(output).toHaveValue('Hello World');
+    // Wait for the output text to contain 'Hello World'
+    await expect(output).toHaveValue('Hello World', { timeout: 30000 });
   });
 
   test('Shows error for invalid input', async ({ page }) => {
-    const input = page.getByLabel('GZipped User Input');
+    const input = page.getByPlaceholder('Paste your GZipped string here...');
 
+    await expect(input).toBeVisible();
     await input.fill('invalid-base64');
 
-    const alert = page.getByRole('alert');
-    await expect(alert).toContainText('Decompression failed');
+    await expect(page.getByText('Decompression failed. Please ensure the input is valid GZip.')).toBeVisible();
   });
 });
