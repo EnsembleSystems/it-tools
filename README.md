@@ -93,6 +93,13 @@ pnpm build
 pnpm test
 ```
 
+### Run E2E Tests with Playwright
+
+```sh
+pnpm dev --port 5050
+npx playwright test
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh

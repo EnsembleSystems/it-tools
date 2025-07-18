@@ -63,7 +63,7 @@ watch(userInput, async (val) => {
     </div>
     <c-input-text
       :value="decompressedOutput"
-      placeholder=""
+      placeholder="Decompressed result will appear here..."
       rows="12"
       readonly multiline monospace overflow-y-auto
     />
