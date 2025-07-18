@@ -3,6 +3,7 @@ import { tool as base64StringConverter } from './base64-string-converter';
 import { tool as basicAuthGenerator } from './basic-auth-generator';
 import { tool as jsonDataCondenser } from './json-data-condenser';
 import { tool as gzipDecompressor } from './gzip-decompressor';
+import { tool as epochConverter } from './epoch-converter';
 import { tool as emailNormalizer } from './email-normalizer';
 
 import { tool as asciiTextDrawer } from './ascii-text-drawer';
@@ -120,6 +121,7 @@ export const toolsByCategory: ToolCategory[] = [
       markdownToHtml,
       gzipDecompressor,
       jsonDataCondenser,
+      epochConverter,
     ],
   },
   {
