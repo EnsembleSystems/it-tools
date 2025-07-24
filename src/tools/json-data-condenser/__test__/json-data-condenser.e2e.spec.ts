@@ -104,4 +104,45 @@ test.describe('Tool - Json data condenser', () => {
     expect(clipboardText).toContain('"id": 1');
     expect(clipboardText).toContain('"name": "Foo"');
   });
+
+  test('Treats objects with same keys but different order as identical (default behavior)', async ({ page }) => {
+    const input = JSON.stringify({
+      items: [
+        { id: 1, name: 'Alice' },
+        { name: 'Alice', id: 1 },
+        { name: 'Bob', id: 2 },
+      ],
+    }, null, 2);
+
+    await page.getByPlaceholder('Paste a JSON payload here...').fill(input);
+    await page.getByRole('button', { name: 'Condense JSON' }).click();
+
+    const output = await page.getByPlaceholder('Condensed JSON will appear here...').inputValue();
+
+    const matches = output.match(/"id":/g) || [];
+    expect(matches.length).toBe(1);
+  });
+
+  test('Preserves key order difference when checkbox is enabled', async ({ page }) => {
+    const input = JSON.stringify({
+      items: [
+        { id: 1, name: 'Alice' },
+        { name: 'Alice', id: 1 },
+        { name: 'Bob', id: 2 },
+      ],
+    }, null, 2);
+
+    await page.getByPlaceholder('Paste a JSON payload here...').fill(input);
+
+    // Enable the checkbox
+    const checkbox = await page.locator('input[type="checkbox"]');
+    await checkbox.check();
+
+    await page.getByRole('button', { name: 'Condense JSON' }).click();
+
+    const output = await page.getByPlaceholder('Condensed JSON will appear here...').inputValue();
+
+    const matches = output.match(/"id":/g) || [];
+    expect(matches.length).toBe(2);
+  });
 });

@@ -6,6 +6,7 @@ const rawJson = ref('');
 const condensedJson = ref('');
 const error = ref<string | null>(null);
 const copySuccess = ref(false);
+const preserveKeyOrder = ref(false);
 
 function condense() {
   error.value = null;
@@ -13,7 +14,8 @@ function condense() {
 
   try {
     const parsed = JSON.parse(rawJson.value);
-    const condensed = condenseJsonStructures(parsed);
+    const condensed = condenseJsonStructures(parsed, { preserveKeyOrder: preserveKeyOrder.value });
+
     condensedJson.value = JSON.stringify(condensed, null, 2);
   }
   catch (err: any) {
@@ -35,6 +37,22 @@ async function copyToClipboard() {
 
 <template>
   <c-card title="JSON Condenser" class="mx-auto max-w-4xl px-4">
+    <!-- Disclaimer Text -->
+    <p class="mb-6 text-sm text-gray-700 leading-relaxed dark:text-gray-300">
+      <strong>Disclaimer:</strong>
+      This tool deduplicates arrays of objects based on their <strong>structure</strong>, not content.
+      For example, <code>{ name: "Alice", id: 1 }</code> and <code>{ id: 1, name: "Alice" }</code>
+      are considered <strong>identical</strong> because they share the same set of keys, regardless of order.
+      Only one representative of each unique shape will be preserved, including in <strong>deeply nested arrays</strong>.
+    </p>
+
+    <div class="mb-4 flex items-center gap-2">
+      <input id="key-order-checkbox" v-model="preserveKeyOrder" type="checkbox" class="accent-blue-600">
+      <label for="key-order-checkbox" class="text-sm text-gray-700 dark:text-gray-300">
+        Treat objects with the same keys but different order as different
+      </label>
+    </div>
+
     <!-- Input -->
     <div class="mb-2 font-semibold">
       Original JSON Input

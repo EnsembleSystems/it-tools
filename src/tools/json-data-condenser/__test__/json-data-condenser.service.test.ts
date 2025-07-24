@@ -19,7 +19,7 @@ describe('condenseJsonStructures', () => {
       status: 'active',
     });
 
-    const output = condenseJsonStructures(input);
+    const output = condenseJsonStructures(input, { preserveKeyOrder: true });
 
     expect(output).toEqual({
       users: [
@@ -29,6 +29,41 @@ describe('condenseJsonStructures', () => {
         { name: 'Heidi', phone: '123-456-7890' },
       ],
       status: 'active',
+    });
+  });
+
+  it('preserves key order if specified', () => {
+    const input = asJsonValue({
+      people: [
+        { id: 1, name: 'Alice' },
+        { name: 'Alice', id: 1 }, // Same keys but different order
+      ],
+    });
+
+    const output = condenseJsonStructures(input, { preserveKeyOrder: true });
+
+    expect(output).toEqual({
+      people: [
+        { id: 1, name: 'Alice' },
+        { name: 'Alice', id: 1 },
+      ],
+    });
+  });
+
+  it('treats objects with same keys but different order as equal when preserveKeyOrder is false', () => {
+    const input = asJsonValue({
+      people: [
+        { id: 1, name: 'Alice' },
+        { name: 'Alice', id: 1 },
+      ],
+    });
+
+    const output = condenseJsonStructures(input, { preserveKeyOrder: false });
+
+    expect(output).toEqual({
+      people: [
+        { id: 1, name: 'Alice' },
+      ],
     });
   });
 
@@ -43,7 +78,7 @@ describe('condenseJsonStructures', () => {
       },
     });
 
-    const output = condenseJsonStructures(input);
+    const output = condenseJsonStructures(input, { preserveKeyOrder: false });
 
     expect(output).toEqual(input);
   });
@@ -51,16 +86,16 @@ describe('condenseJsonStructures', () => {
   it('keeps non-object array values untouched', () => {
     const input = asJsonValue([1, 2, 3, 'a', true, null]);
 
-    const output = condenseJsonStructures(input);
+    const output = condenseJsonStructures(input, { preserveKeyOrder: false });
 
     expect(output).toEqual([1, 2, 3, 'a', true, null]);
   });
 
   it('returns primitive values unchanged', () => {
-    expect(condenseJsonStructures(42)).toBe(42);
-    expect(condenseJsonStructures('hello')).toBe('hello');
-    expect(condenseJsonStructures(null)).toBe(null);
-    expect(condenseJsonStructures(true)).toBe(true);
+    expect(condenseJsonStructures(42, { preserveKeyOrder: false })).toBe(42);
+    expect(condenseJsonStructures('hello', { preserveKeyOrder: false })).toBe('hello');
+    expect(condenseJsonStructures(null, { preserveKeyOrder: false })).toBe(null);
+    expect(condenseJsonStructures(true, { preserveKeyOrder: false })).toBe(true);
   });
 
   it('handles nested object arrays and preserves unique structures', () => {
@@ -87,7 +122,7 @@ describe('condenseJsonStructures', () => {
       },
     });
 
-    const output = condenseJsonStructures(input);
+    const output = condenseJsonStructures(input, { preserveKeyOrder: false });
 
     expect(output).toEqual({
       data: {
