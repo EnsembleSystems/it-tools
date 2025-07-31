@@ -1,5 +1,5 @@
 import { defineThemes } from '../theme/theme.models';
-import { appThemes } from '../theme/themes';
+import { appThemes } from '../theme/theme-ensemble';
 
 const sizes = {
   small: {

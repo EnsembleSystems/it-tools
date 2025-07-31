@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends unknown">
-import { useAppTheme } from '../theme/themes';
+import { useAppTheme } from '../theme/theme-ensemble';
 import type { CLabelProps } from '../c-label/c-label.types';
 import type { CSelectOption } from './c-select.types';
 import { useTheme } from './c-select.theme';
@@ -142,16 +142,15 @@ function onSearchInput() {
     <div ref="elementRef" relative class="c-select" w-full>
       <div
         flex flex-nowrap cursor-pointer items-center
-        :class="{ 'is-open': isOpen, 'important:border-primary': isOpen }"
+        :class="{ 'is-open': isOpen }"
         class="c-select-input"
         tabindex="0"
-        hover:important:border-primary
         @click="toggleOpen"
         @keydown="handleKeydown"
       >
         <div flex-1 truncate>
           <slot name="displayed-value">
-            <input v-if="searchable && isOpen" ref="searchInputRef" v-model="searchQuery" type="text" placeholder="Search..." class="search-input" w-full lh-normal color-current @input="onSearchInput">
+            <input v-if="searchable && isOpen" ref="searchInputRef" v-model="searchQuery" type="text" placeholder="Search..." class="search-input" w-full color-current lh-normal @input="onSearchInput">
             <span v-else-if="selectedOption" lh-normal>
               {{ selectedOption.label }}
             </span>
@@ -180,7 +179,11 @@ function onSearchInput() {
               cursor-pointer
               px-4
               py-1
-              :class="{ active: selectedOption?.label === option.label, hover: focusIndex === index }"
+              :class="{
+                active: selectedOption?.label === option.label,
+                hover: isOpen && focusIndex === index && searchable,
+              }"
+
               class="c-select-dropdown-option"
               @click="selectOption({ option })"
             >
@@ -213,6 +216,10 @@ function onSearchInput() {
     height: v-bind('size.height');
     transition: border-color 0.2s ease-in-out;
 
+    &:hover {
+      border-color: v-bind('appTheme.primary.color');
+    }
+
     .placeholder, .chevron {
       color: v-bind('appTheme.text.mutedColor');
     }
@@ -221,7 +228,7 @@ function onSearchInput() {
   .c-select-dropdown {
     background-color: v-bind('theme.backgroundColor');
     border-radius: 4px;
-    // box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     box-shadow: v-bind('theme.dropdownShadow');
     font-family: inherit;
     font-size: inherit;
@@ -238,9 +245,17 @@ function onSearchInput() {
         color: v-bind('theme.option.active.textColor');
       }
 
-      &:hover, &.hover {
-        background-color: v-bind('theme.option.hover.backgroundColor');
+      &:hover {
+        background-color: v-bind('appTheme.primary.color');
+        color: white;
       }
+
+      &.focused {
+        background-color: v-bind('appTheme.primary.color');
+        color: white;
+        box-shadow: none;
+      }
+
     }
   }
 }
