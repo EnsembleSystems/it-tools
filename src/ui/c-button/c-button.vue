@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { RouteLocationRaw } from 'vue-router';
-import { useAppTheme } from '../theme/themes';
+import { useAppTheme } from '../theme/theme-ensemble';
 import { useTheme } from './c-button.theme';
 
 const props = withDefaults(
@@ -105,6 +105,7 @@ const size = computed(() => theme.value.size[sizeName.value]);
 
     &:active {
       background-color: v-bind('variantTheme.pressed.backgroundColor');
+      color: white;
     }
   }
 

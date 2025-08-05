@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAppTheme } from '../theme/themes';
+import { useAppTheme } from '../theme/theme-ensemble';
 import { useTheme } from './c-input-text.theme';
 import { generateRandomId } from '@/utils/random';
 import { type UseValidationRule, useValidation } from '@/composable/validation';

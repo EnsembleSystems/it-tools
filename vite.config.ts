@@ -63,16 +63,16 @@ export default defineConfig({
         lang: 'fr-FR',
         start_url: `${baseUrl}?utm_source=pwa&utm_medium=pwa`,
         orientation: 'any',
-        theme_color: '#18a058',
+        theme_color: '#2886BB',
         background_color: '#f1f5f9',
         icons: [
           {
-            src: '/favicon-16x16.png',
+            src: '/favicon2-16x16.png',
             type: 'image/png',
             sizes: '16x16',
           },
           {
-            src: '/favicon-32x32.png',
+            src: '/favicon2-32x32.png',
             type: 'image/png',
             sizes: '32x32',
           },

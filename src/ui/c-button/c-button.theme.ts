@@ -1,6 +1,6 @@
 import { darken, lighten } from '../color/color.models';
 import { defineThemes } from '../theme/theme.models';
-import { appThemes } from '../theme/themes';
+import { appThemes } from '../theme/theme-ensemble';
 
 function createState({
   textColor,
