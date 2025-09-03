@@ -3,13 +3,11 @@ import { useThemeVars } from 'naive-ui';
 import { ref, toRefs } from 'vue';
 import FavoriteButton from './FavoriteButton.vue';
 
-// import { useAppTheme } from '/theme_ensemble';
 import type { Tool } from '@/tools/tools.types';
 
 const props = defineProps<{ tool: Tool & { category: string } }>();
 const { tool } = toRefs(props);
 const theme = useThemeVars();
-// const appTheme = useAppTheme();
 
 const isHovered = ref(false);
 
@@ -22,7 +20,6 @@ const cardStyle = computed(() => ({
 
 <template>
   <router-link :to="tool.path" class="decoration-none">
-    <!-- <c-card class="h-full transition transition-duration-0.5s !border-2px !hover:border-primary"> -->
     <c-card
       class="h-full"
       :style="cardStyle"
@@ -57,12 +54,3 @@ const cardStyle = computed(() => ({
     </c-card>
   </router-link>
 </template>
-
-<!-- <style lang="less" scoped>
-.ToolCard {
-
-  &:hover {
-    border-color: v-bind('appTheme.primary.color');
-  }
-}
-</style> -->

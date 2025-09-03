@@ -32,8 +32,5 @@ const theme = useTheme();
     margin-bottom: 20px;
   }
 
-  // &:hover {
-  //   border: 1px solid red;
-  // }
 }
 </style>
