@@ -67,12 +67,12 @@ export default defineConfig({
         background_color: '#f1f5f9',
         icons: [
           {
-            src: '/favicon2-16x16.png',
+            src: '/favicon-16x16.png',
             type: 'image/png',
             sizes: '16x16',
           },
           {
-            src: '/favicon2-32x32.png',
+            src: '/favicon-32x32.png',
             type: 'image/png',
             sizes: '32x32',
           },
