@@ -31,5 +31,6 @@ const theme = useTheme();
     font-weight: 500;
     margin-bottom: 20px;
   }
+
 }
 </style>
